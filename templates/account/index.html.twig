@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte - La boutique vitaminée{% endblock %}
+
+{% block content %}
+<h1>Mon compte</h1>
+    Bienvenue sur votre compte {{ app.user.firstname }} ! <br>
+    C'est dans cet espace que vous allez pouvoir gérer toutes vos informations personnelles.
+    <br><br>
+
+    - <a href="{{ path('account_password') }}">Modifier mon mot de passe<a/><br/>
+    - Ajouter mes adresses <br/>
+    - Mes commandes <br/>
+
+    <br>
+
+{% endblock %}
