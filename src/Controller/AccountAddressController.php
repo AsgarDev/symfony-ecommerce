@@ -31,7 +31,7 @@ class AccountAddressController extends AbstractController
 	{
 		$address = new Address();
 		$form = $this->createForm(AddressType::class, $address);
-		$form->handleRequest($request);
+		$form->handleRequest($request->getCurrentRequest());
 		if ($form->isSubmitted() && $form->isValid()) {
 			$address->setUser($this->getUser());
 			$this->entityManager->persist($address);
@@ -58,7 +58,7 @@ class AccountAddressController extends AbstractController
 		}
 
 		$form = $this->createForm(AddressType::class, $address);
-		$form->handleRequest($request);
+		$form->handleRequest($request->getCurrentRequest());
 		if ($form->isSubmitted() && $form->isValid()) {
 			$this->entityManager->flush();
 			return $this->redirectToRoute('account_address');

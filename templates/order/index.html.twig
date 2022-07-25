@@ -10,12 +10,12 @@
         <div class="col-md-6">
             {% set formHtml %}
                 {{ form_start(form, {action:path('order_recap')}) }}
-
+                    {{ form_label(form.addresses, 'Choisissez votre adresse de livraison') }}
+                    <a href="{{ path('account_address_add') }}">Ajouter une nouvelle adresse</a>
                 {{ form_end(form) }}
             {% endset %}
 
-            {{ formHtml|replace('[br]', '<br>')|raw }}
-            <b>Choisir mon transporteur</b>
+            {{ formHtml|replace({'[br]':'<br>'})|raw }}
         </div>
         <div class="col-md-6">
             <div class="text-center">

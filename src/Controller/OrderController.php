@@ -7,6 +7,7 @@ use App\Entity\Order;
 use App\Entity\OrderDetails;
 use App\Form\OrderType;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\DocBlock\Tags\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ class OrderController extends AbstractController
     		'user' => $this->getUser()
 		]);
 
-    	$form->handleRequest($request);
+    	$form->handleRequest($request->getCurrentRequest());
 
     	if ($form->isSubmitted() && $form->isValid()) {
 
@@ -44,14 +45,14 @@ class OrderController extends AbstractController
 		]);
     }
 
-	#[Route('/commande/recapitulatif', name: 'order_recap')]
+	#[Route('/commande/recapitulatif', name: 'order_recap', methods:'POST')]
 	public function add(RequestStack $request, Cart $cart)
 	{
 		$form = $this->createForm(OrderType::class, null, [
 			'user' => $this->getUser()
 		]);
 
-		$form->handleRequest($request);
+		$form->handleRequest($request->getCurrentRequest());
 
 		if ($form->isSubmitted() && $form->isValid()) {
 			$date = new \DateTimeImmutable();
@@ -66,7 +67,6 @@ class OrderController extends AbstractController
 			$delivery_content .= '<br>'.$delivery->getAddress();
 			$delivery_content .= '<br>'.$delivery->getPostal().' '.$delivery->getCity();
 			$delivery_content .= '<br>'.$delivery->getCountry();
-			$delivery_content .= '<br>'.$delivery->getAddress();
 
 			// Enregistrer ma commande Order()
 			$order = new Order();
@@ -92,12 +92,14 @@ class OrderController extends AbstractController
 			}
 
 			$this->entityManager->flush();
+
+			return $this->render('order/add.html.twig', [
+				'cart' => $cart->getFull(),
+				'carrier' => $carriers,
+				'delivery' => $delivery_content
+			]);
 		}
 
-		return $this->render('order/add.html.twig', [
-			'cart' => $cart->getFull(),
-			'carrier' => $carriers,
-			'delivery' => $delivery_content
-		]);
+		return $this->redirectToRoute('cart');
 	}
 }

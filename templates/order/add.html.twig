@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block javascript %}
+    <script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
+
 {% block title %}Paiement de ma commande | La boutique vitaminée{% endblock %}
 
 {% block content %}
@@ -9,7 +13,7 @@
     <div class="row">
         <div class="col-md-6">
             <strong>Mon adresse de livraison</strong><br>
-            <div class="form-check">
+            <div class="form-check mt-4">
                 {{ delivery|raw }}
             </div>
             <hr>
@@ -53,7 +57,34 @@
             <hr>
             <strong>Total : </strong>{{ ((total/100) + carrier.price)|number_format(2, ',', '.') }}
 
-            <a href="" class="btn btn-success btn-block mt-3">Payer | {{ ((total/100) + carrier.price)|number_format(2, ',', '.') }}</a>
+            <a class="btn btn-success btn-block mt-3" id="checkout-button">Payer | {{ ((total/100) + carrier.price)|number_format(2, ',', '.') }}</a>
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        var stripe = Stripe('pk_test_51LPWtMEeKuw4FxWFq2IELK8rmdzE8qFuhs6rN0y6tzU18NBD6P7CIa2sC7FkAAhd1MNjgaGLIToX05uP3MFFjHJq00D7xlaaAV');
+        var checkoutButton = document.getElementById('checkout-button');
+
+        checkoutButton.addEventListener('click', function() {
+            fetch('/commande/create-session', {
+                method: "POST"
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (session) {
+                return stripe.redirectToCheckout({ sessionId: session.id});
+            })
+            .then(function (result) {
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(function (error) {
+                console.error("Errors:", error);
+            });
+        });
+    </script>
 {% endblock %}

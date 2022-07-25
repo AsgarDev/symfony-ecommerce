@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Address;
-use Doctrine\DBAL\Types\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
