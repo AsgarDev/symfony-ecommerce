@@ -36,8 +36,14 @@ class Order
     #[ORM\OneToMany(mappedBy: 'myOrder', targetEntity: OrderDetails::class)]
     private Collection $orderDetails;
 
+    #[ORM\Column(length: 255)]
+    private ?string $reference = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripeSessionId = null;
+
     #[ORM\Column]
-    private ?bool $isPaid = null;
+    private ?int $state = null;
 
     public function __construct()
     {
@@ -149,14 +155,38 @@ class Order
         return $this;
     }
 
-    public function isIsPaid(): ?bool
+    public function getReference(): ?string
     {
-        return $this->isPaid;
+        return $this->reference;
     }
 
-    public function setIsPaid(bool $isPaid): self
+    public function setReference(string $reference): self
     {
-        $this->isPaid = $isPaid;
+        $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getStripeSessionId(): ?string
+    {
+        return $this->stripeSessionId;
+    }
+
+    public function setStripeSessionId(?string $stripeSessionId): self
+    {
+        $this->stripeSessionId = $stripeSessionId;
+
+        return $this;
+    }
+
+    public function getState(): ?int
+    {
+        return $this->state;
+    }
+
+    public function setState(int $state): self
+    {
+        $this->state = $state;
 
         return $this;
     }

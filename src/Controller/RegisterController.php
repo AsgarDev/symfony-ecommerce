@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Class\Mail;
 use App\Entity\User;
 use App\Form\RegisterType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,8 @@ class RegisterController extends AbstractController
     #[Route('/inscription', name: 'register')]
     public function index(Request $request, UserPasswordHasherInterface $hasher): Response
     {
+    	$notification = null;
+
     	$user = new User();
     	$form = $this->createForm(RegisterType::class, $user);
 
@@ -28,15 +31,28 @@ class RegisterController extends AbstractController
     	if ($form->isSubmitted() && $form->isValid()){
     		$user = $form->getData();
 
-    		$password = $hasher->hashPassword($user, $user->getPassword());
-    		$user->setPassword($password);
+    		$search_email = $this->entityManager->getRepository(User::class)->findOneByEmail($user->getEmail());
+    		if (!$search_email) {
+				$password = $hasher->hashPassword($user, $user->getPassword());
+				$user->setPassword($password);
 
-			$this->entityManager->persist($user);
-			$this->entityManager->flush();
+				$this->entityManager->persist($user);
+				$this->entityManager->flush();
+
+				$email = new Mail();
+				$content = "Bonjour ".$user->getFirstname()."<br>Bienvenue sur la première boutique dédiée aux aliments vitaminés.<br><br>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim illo inventore ipsa necessitatibus quos similique ut velit. Accusamus dolore earum esse, hic, mollitia nostrum possimus quas unde, veritatis voluptas voluptatibus.";
+				$email->send($user->getEmail(), $user->getFirstname(), 'Bienvenue sur la Boutique Vitaminée', $content);
+
+				$notification = "Votre inscritpion s'est correctement déroulée. Vous pouvez dès à présent vous connecter à votre compte";
+			} else {
+				$notification = "L'email que vous avez renseigné existe déjà";
+			}
+
     	}
 
         return $this->render('register/index.html.twig', [
-        	'form'=>$form->createView()
+        	'form' => $form->createView(),
+			'notification' => $notification
 		]);
     }
 }
