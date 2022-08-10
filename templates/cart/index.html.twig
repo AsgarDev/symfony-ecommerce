@@ -51,7 +51,7 @@
         </tbody>
     </table>
     <div class="text-right">
-        <b>Nombre de produits :</b>{{ cart|length }}<br>
+        <b>Nombre de produits : </b>{{ cart|length }}<br>
         <b>Total : </b>{{ (total/100)|number_format(2, ',', '.') }}€
         <a href="{{ path('order') }}" class="btn btn-success btn-block mt-3">Valider mon panier</a>
     </div>

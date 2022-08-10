@@ -4,7 +4,7 @@
 
 {% block content %}
     <h2>Je passe ma commande</h2>
-    <p>Choisissez vos préférences avant de passer votr commande sur la boutique vitaminée</p>
+    <p>Choisissez vos préférences avant de passer votre commande sur la boutique vitaminée</p>
     <hr>
     <div class="row">
         <div class="col-md-6">
@@ -18,8 +18,8 @@
             {{ formHtml|replace({'[br]':'<br>'})|raw }}
         </div>
         <div class="col-md-6">
-            <div class="text-center">
-                <b>Récap de ma commande</b><br>
+            <div>
+                <b>Récapitulatif de ma commande</b><br>
                 <p>Retrouvez le récapitulatif de vos produits</p>
             </div>
             <div class="order-summary">
@@ -28,7 +28,7 @@
                         <div class="col-2">
                             <img src="/uploads/images/products/{{ product.product.illustration }}" alt="{{ product.product.name }}" height="75px">
                         </div>
-                        <div class="col-8 my-auto">
+                        <div class="col-8 my-auto" align="right">
                             {{ product.product.name }}<br>
                             <small>{{ product.product.subtitle }}</small>
                         </div>

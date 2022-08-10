@@ -21,7 +21,7 @@
             <div class="form-check">
                 {{ carrier.name }}<br>
                 {{ carrier.description }}<br>
-                {{ (carrier.price / 100)|number_format(2, ',', '.') }} €
+                {{ (carrier.price / 100 )|number_format(2, ',', '.') }} €
             </div>
         </div>
         <div class="col-md-6">
@@ -35,7 +35,7 @@
                         <div class="col-2">
                             <img src="/uploads/images/products/{{ product.product.illustration }}" alt="{{ product.product.name }}" height="75px">
                         </div>
-                        <div class="col-8 my-auto">
+                        <div class="col-8 my-auto" align="right">
                             {{ product.product.name }}<br>
                             <small>
                                 {{ product.product.subtitle }}
@@ -51,11 +51,13 @@
                 {% endfor %}
             </div>
 
-            <hr>
-            <strong>Sous-total :</strong>{{ (total/100)|number_format(2, ',', '.') }} €<br>
-            <strong>Livraison :</strong>{{ (carrier.price / 100)|number_format(2, ',', '.') }} €
-            <hr>
-            <strong>Total : </strong>{{ ((total/100) + (carrier.price / 100))|number_format(2, ',', '.') }}
+            <div align="right">
+                <hr>
+                <strong>Sous-total : </strong>{{ (total/100)|number_format(2, ',', '.') }} €<br>
+                <strong>Livraison : </strong>{{ (carrier.price / 100)|number_format(2, ',', '.') }} €
+                <hr>
+                <strong>Total : </strong>{{ ((total/100) + (carrier.price / 100))|number_format(2, ',', '.') }} €
+            </div>
 
             <a class="btn btn-success btn-block mt-3" id="checkout-button">Payer | {{ ((total/100) + (carrier.price / 100))|number_format(2, ',', '.') }}</a>
         </div>
@@ -76,7 +78,7 @@
             })
             .then(function (session) {
                 if (session.error === 'order') {
-                    window.location.replace({{ path('order') }});
+                    window.location.replace("{{ path('order') }}");
                 } else {
                     return stripe.redirectToCheckout({ sessionId: session.id});
                 }
