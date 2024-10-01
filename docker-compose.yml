@@ -1,21 +1,64 @@
-version: '3'
-
+version: '3.8'
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-13}-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-      POSTGRES_USER: ${POSTGRES_USER:-symfony}
+  application:
+    container_name: symfony_ecommerce_php
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    ports:
+      - "9002:8000"
+    working_dir: /var/www
+    command: "symfony server:start --port=8000 --dir=/var/www"
     volumes:
-      - db-data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - symfony_ecommerce_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: symfony_ecommerce_nginx
+    ports:
+      - "8082:80"
+      - "445:443"
+    volumes:
+      - ./:/var/www/
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d
+      - ./docker/nginx/ssl/:/etc/ssl
+    networks:
+      - symfony_ecommerce_network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: symfony_ecommerce_mailhog
+    restart: always
+    ports:
+      - "1026:1025"
+      - "8026:8025"
+    networks:
+      - symfony_ecommerce_network
+
+  database:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'app'
+      MYSQL_USER: 'symfony'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    networks:
+      - symfony_ecommerce_network
+
+networks:
+  symfony_ecommerce_network:
+    driver: bridge
 
 volumes:
-###> doctrine/doctrine-bundle ###
   db-data:
-###< doctrine/doctrine-bundle ###
+    driver: local
